@@ -7,7 +7,7 @@ const HtmlInlineSourcePlugin = require('html-webpack-inline-source-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
 const ImageminPlugin = require('imagemin-webpack-plugin').default;
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const WebpackDeepScopeAnalysisPlugin = require('webpack-deep-scope-plugin').default;
+// const WebpackDeepScopeAnalysisPlugin = require('webpack-deep-scope-plugin').default;
 
 module.exports = function(env, argv) {
     env = env || {};
@@ -18,8 +18,7 @@ module.exports = function(env, argv) {
 };
 
 function getExtensionConfig(env) {
-    const plugins = [new CleanPlugin(['out'], { verbose: false })];
-    // Comment out for now, as it errors
+    const plugins = [new CleanPlugin(['dist'], { verbose: false })];
     // if (env.production) {
     //     plugins.push(new WebpackDeepScopeAnalysisPlugin());
     // }
@@ -33,7 +32,7 @@ function getExtensionConfig(env) {
         output: {
             libraryTarget: 'commonjs2',
             filename: 'extension.js',
-            path: path.resolve(__dirname, 'out'),
+            path: path.resolve(__dirname, 'dist'),
             devtoolModuleFilenameTemplate: 'file:///[absolute-resource-path]'
         },
         resolve: {
@@ -138,9 +137,9 @@ function getUIConfig(env) {
         })
     ];
 
-    if (env.production) {
-        plugins.push(new WebpackDeepScopeAnalysisPlugin());
-    }
+    // if (env.production) {
+    //     plugins.push(new WebpackDeepScopeAnalysisPlugin());
+    // }
 
     return {
         name: 'ui',
@@ -155,8 +154,8 @@ function getUIConfig(env) {
         devtool: !env.production ? 'eval-source-map' : undefined,
         output: {
             filename: '[name].js',
-            path: path.resolve(__dirname, 'out/ui'),
-            publicPath: '{{root}}/out/ui/'
+            path: path.resolve(__dirname, 'dist/ui'),
+            publicPath: '{{root}}/dist/ui/'
         },
         optimization: {
             splitChunks: {

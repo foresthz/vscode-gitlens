@@ -9,7 +9,7 @@ images/**
 .vscode/**
 test/**
 src/**
-out/ui/**
+dist/ui/**
 *.map
 .github/**
 .gitignore
