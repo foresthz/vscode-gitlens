@@ -7,6 +7,7 @@ const HtmlInlineSourcePlugin = require('html-webpack-inline-source-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
 const ImageminPlugin = require('imagemin-webpack-plugin').default;
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+// const SizePlugin = require('size-plugin');
 // const WebpackDeepScopeAnalysisPlugin = require('webpack-deep-scope-plugin').default;
 
 module.exports = function(env, argv) {
@@ -18,9 +19,13 @@ module.exports = function(env, argv) {
 };
 
 function getExtensionConfig(env) {
-    const plugins = [new CleanPlugin(['dist'], { verbose: false })];
+    const plugins = [
+        // https://github.com/GoogleChromeLabs/size-plugin/issues/12
+        // new SizePlugin(),
+        new CleanPlugin(['dist'], { verbose: false })
+    ];
     // if (env.production) {
-    //     plugins.push(new WebpackDeepScopeAnalysisPlugin());
+    // plugins.push(new WebpackDeepScopeAnalysisPlugin());
     // }
 
     return {
@@ -74,6 +79,8 @@ function getUIConfig(env) {
     }
 
     const plugins = [
+        // https://github.com/GoogleChromeLabs/size-plugin/issues/12
+        // new SizePlugin(),
         new CleanPlugin(clean, { verbose: false }),
         new MiniCssExtractPlugin({
             filename: '[name].css'
@@ -138,7 +145,7 @@ function getUIConfig(env) {
     ];
 
     // if (env.production) {
-    //     plugins.push(new WebpackDeepScopeAnalysisPlugin());
+    // plugins.push(new WebpackDeepScopeAnalysisPlugin());
     // }
 
     return {

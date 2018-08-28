@@ -3606,7 +3606,8 @@
         "prettier": "1.14.2",
         "prettier-tslint": "0.4.0",
         "sass-loader": "7.1.0",
-        "style-loader": "0.22.1",
+        "size-plugin": "1.0.1",
+        "style-loader": "0.23.0",
         "tslint": "5.11.0",
         "tslint-loader": "3.6.0",
         "tslint-prettiest": "0.0.1",
@@ -3615,7 +3616,7 @@
         "vscode": "1.1.21",
         "webpack": "4.17.1",
         "webpack-cli": "3.1.0",
-        "webpack-deep-scope-plugin": "1.5.0",
+        "webpack-deep-scope-plugin": "1.5.1",
         "webpack-node-externals": "1.7.2"
     }
 }
