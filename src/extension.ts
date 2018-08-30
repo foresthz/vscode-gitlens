@@ -13,12 +13,19 @@ import {
     KeyMap,
     OutputLevel
 } from './configuration';
-import { CommandContext, extensionId, extensionQualifiedId, GlobalState, setCommandContext } from './constants';
+import {
+    CommandContext,
+    extensionId,
+    extensionQualifiedId,
+    GlobalState,
+    GlyphChars,
+    setCommandContext
+} from './constants';
 import { Container } from './container';
 import { GitService } from './gitService';
 import { Logger } from './logger';
 import { Messages } from './messages';
-import { Versions } from './system';
+import { Strings, Versions } from './system';
 // import { Telemetry } from './telemetry';
 
 interface GitApi {
@@ -100,8 +107,7 @@ export async function activate(context: ExtensionContext) {
     // Constantly over my data cap so stop collecting initialized event
     // Telemetry.trackEvent('initialized', Objects.flatten(cfg, 'config', true));
 
-    const duration = process.hrtime(start);
-    Logger.log(`GitLens(v${gitlensVersion}) activated in ${duration[0] * 1000 + Math.floor(duration[1] / 1000000)} ms`);
+    Logger.log(`GitLens(v${gitlensVersion}) activated ${GlyphChars.Dot} ${Strings.getDurationMilliseconds(start)} ms`);
 }
 
 export function deactivate() {}
