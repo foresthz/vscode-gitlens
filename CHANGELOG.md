@@ -5,9 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Changed
+- Switches to use the new git extension's api to get the git path
+
 ### Fixed
 - Fixes [#405](https://github.com/eamodio/vscode-gitlens/issues/405) - Secondary, blank repository appears repeatedly in gitExplorer view
 - Fixes issues with git log caching
+
+### Removed
+- Removes `gitlens.advanced.git` setting as it is really no longer needed
 
 ## [8.5.6] - 2018-08-21
 ### Fixed

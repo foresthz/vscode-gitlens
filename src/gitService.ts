@@ -6,6 +6,7 @@ import {
     Disposable,
     Event,
     EventEmitter,
+    extensions,
     Range,
     TextEditor,
     Uri,
@@ -15,6 +16,7 @@ import {
     WorkspaceFolder,
     WorkspaceFoldersChangeEvent
 } from 'vscode';
+import { GitExtension } from './@types/git';
 import { configuration, IRemotesConfig } from './configuration';
 import { CommandContext, DocumentSchemes, GlyphChars, setCommandContext } from './constants';
 import { Container } from './container';
@@ -1842,8 +1844,19 @@ export class GitService implements Disposable {
         return Git.getEncoding(workspace.getConfiguration('files', uri).get<string>('encoding'));
     }
 
-    static async initialize(gitPath?: string): Promise<void> {
-        await Git.setOrFindGitPath(gitPath);
+    static async initialize(): Promise<void> {
+        // Try to use the same git as the built-in vscode git extension
+        let gitPath;
+        try {
+            const gitExtension = extensions.getExtension('vscode.git');
+            if (gitExtension !== undefined) {
+                const gitApi = ((await gitExtension.activate()) as GitExtension).getAPI(1);
+                gitPath = gitApi.git.path;
+            }
+        }
+        catch {}
+
+        await Git.setOrFindGitPath(gitPath || workspace.getConfiguration('git').get<string>('path'));
     }
 
     static getGitPath(): string {
