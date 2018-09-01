@@ -1495,6 +1495,7 @@ export class GitService implements Disposable {
             folder = { uri: Uri.file(rp), name: parts[parts.length - 1], index: this._repositoryTree.count() };
         }
 
+        Logger.log(`Repository found in '${rp}'`);
         repo = new Repository(folder, rp, false, this.onAnyRepositoryChanged.bind(this), this._suspended);
         this._repositoryTree.set(rp, repo);
 
@@ -1724,8 +1725,6 @@ export class GitService implements Disposable {
         if (ref !== undefined) {
             cacheKey += `:${ref}`;
         }
-
-        Logger.log(`isTracked('${fileName}', '${repoPath}'${ref !== undefined ? `, '${ref}'` : ''})`);
 
         let tracked = this._trackedCache.get(cacheKey);
         try {
