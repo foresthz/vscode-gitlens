@@ -87,7 +87,7 @@ export class BranchNode extends ExplorerRefNode implements PageableExplorerNode 
                     GlyphChars.ArrowLeftRightLong
                 }${GlyphChars.Space} ${this.branch.tracking}`;
             }
-            tooltip += `\n\nis tracking ${this.branch.tracking}${this.branch.getTrackingStatus({
+            tooltip += ` is tracking ${this.branch.tracking}\n${this.branch.getTrackingStatus({
                 empty: 'up-to-date',
                 expand: true,
                 separator: '\n'
