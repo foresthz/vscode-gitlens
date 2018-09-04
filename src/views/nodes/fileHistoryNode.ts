@@ -47,12 +47,13 @@ export class FileHistoryNode extends SubscribeableExplorerNode<FileHistoryExplor
                 previousSha = 'HEAD';
             }
 
+            const user = await Container.git.getCurrentUser(this.uri.repoPath!);
             const commit = new GitLogCommit(
                 GitCommitType.File,
                 this.uri.repoPath!,
                 sha,
                 'You',
-                undefined,
+                user !== undefined ? user.email : undefined,
                 new Date(),
                 '',
                 status.fileName,

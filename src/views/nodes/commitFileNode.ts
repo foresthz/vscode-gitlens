@@ -1,6 +1,6 @@
 'use strict';
 import * as path from 'path';
-import { Command, TreeItem, TreeItemCollapsibleState } from 'vscode';
+import { Command, Selection, TreeItem, TreeItemCollapsibleState } from 'vscode';
 import { Commands, DiffWithPreviousCommandArgs } from '../../commands';
 import { GlyphChars } from '../../constants';
 import { Container } from '../../container';
@@ -35,7 +35,8 @@ export class CommitFileNode extends ExplorerRefNode {
         public readonly status: IGitStatusFile,
         public commit: GitLogCommit,
         protected readonly explorer: Explorer,
-        private displayAs: CommitFileNodeDisplayAs
+        private readonly _displayAs: CommitFileNodeDisplayAs,
+        private readonly _selection?: Selection
     ) {
         super(GitUri.fromFileStatus(status, commit.repoPath, commit.sha));
     }
@@ -70,20 +71,20 @@ export class CommitFileNode extends ExplorerRefNode {
         item.contextValue = this.resourceType;
         item.tooltip = this.tooltip;
 
-        if ((this.displayAs & CommitFileNodeDisplayAs.CommitIcon) === CommitFileNodeDisplayAs.CommitIcon) {
+        if ((this._displayAs & CommitFileNodeDisplayAs.CommitIcon) === CommitFileNodeDisplayAs.CommitIcon) {
             item.iconPath = {
                 dark: Container.context.asAbsolutePath(path.join('images', 'dark', 'icon-commit.svg')),
                 light: Container.context.asAbsolutePath(path.join('images', 'light', 'icon-commit.svg'))
             };
         }
-        else if ((this.displayAs & CommitFileNodeDisplayAs.StatusIcon) === CommitFileNodeDisplayAs.StatusIcon) {
+        else if ((this._displayAs & CommitFileNodeDisplayAs.StatusIcon) === CommitFileNodeDisplayAs.StatusIcon) {
             const icon = getGitStatusIcon(this.status.status);
             item.iconPath = {
                 dark: Container.context.asAbsolutePath(path.join('images', 'dark', icon)),
                 light: Container.context.asAbsolutePath(path.join('images', 'light', icon))
             };
         }
-        else if ((this.displayAs & CommitFileNodeDisplayAs.Gravatar) === CommitFileNodeDisplayAs.Gravatar) {
+        else if ((this._displayAs & CommitFileNodeDisplayAs.Gravatar) === CommitFileNodeDisplayAs.Gravatar) {
             item.iconPath = this.commit.getGravatarUri(Container.config.defaultGravatarsStyle);
         }
 
@@ -108,7 +109,7 @@ export class CommitFileNode extends ExplorerRefNode {
     get label() {
         if (this._label === undefined) {
             this._label =
-                this.displayAs & CommitFileNodeDisplayAs.CommitLabel
+                this._displayAs & CommitFileNodeDisplayAs.CommitLabel
                     ? CommitFormatter.fromTemplate(this.getCommitTemplate(), this.commit, {
                           truncateMessageAtNewLine: true,
                           dateFormat: Container.config.defaultDateFormat
@@ -137,7 +138,7 @@ export class CommitFileNode extends ExplorerRefNode {
     private _tooltip: string | undefined;
     get tooltip() {
         if (this._tooltip === undefined) {
-            if (this.displayAs & CommitFileNodeDisplayAs.CommitLabel) {
+            if (this._displayAs & CommitFileNodeDisplayAs.CommitLabel) {
                 this._tooltip = CommitFormatter.fromTemplate(
                     this.commit.isUncommitted
                         ? `\${author} ${GlyphChars.Dash} \${id}\n\${ago} (\${date})`
@@ -171,7 +172,7 @@ export class CommitFileNode extends ExplorerRefNode {
                 GitUri.fromFileStatus(this.status, this.commit.repoPath),
                 {
                     commit: this.commit,
-                    line: 0,
+                    line: this._selection !== undefined ? this._selection.active.line : 0,
                     showOptions: {
                         preserveFocus: true,
                         preview: true

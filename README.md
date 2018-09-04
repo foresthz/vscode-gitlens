@@ -80,6 +80,7 @@ Here are just some of the features that GitLens provides,
 
 - a [_GitLens_ explorer](#gitlens-explorer 'Jump to the GitLens explorer') to navigate and explore repositories
 - a [_GitLens File History_ explorer](#gitlens-file-history-explorer 'Jump to the GitLens File History explorer') to navigate and explore file histories
+- a [_GitLens Line History_ explorer](#gitlens-line-history-explorer 'Jump to the GitLens Line History explorer') to navigate and explore file line histories
 - an on-demand [_GitLens Results_ explorer](#gitlens-results-explorer 'Jump to the GitLens Results explorer') to navigate and explore commit searches, visualize comparisons between branches, tags, commits, and more
 - authorship [code lens](#code-lens 'Jump to the Code Lens') showing the most recent commit and # of authors to the top of files and/or on code blocks
 - an unobtrusive [current line blame](#current-line-blame 'Jump to the Current Line Blame') annotation at the end of the line
@@ -233,10 +234,31 @@ A [customizable](#gitlens-file-history-explorer-settings 'Jump to the GitLens Fi
 - A toolbar provides a _Refresh_ command
   - A context menu provides a _Follow Renames_ or _Don't Follow Renames_ command
 
-The file history view provides the revision history of the current file, which has the following features,
+The file history explorer provides the revision history of the current file, which has the following features,
 
 - Automatically updates to track the current editor
-- A context menu provides _Open File_, _Open File in Remote_ (if available), and _Refresh_ commands
+- A context menu provides _Open File_, _Open File in Remote_ (if available), _Copy Remote File Url to Clipboard_ (if available), and _Refresh_ commands
+- An inline toolbar provides an _Open File_ command
+- Context menus for each revision (commit) provides
+  - _Open Changes_, _Open Changes with Working File_, _Open File_, _Open Revision_, _Open File in Remote_ (if available), _Open Revision in Remote_ (if available), _Apply Changes_, _Compare with Selected_ (when available), _Select for Compare_, and _Show Commit File Details_ commands
+
+---
+
+### GitLens Line History Explorer
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/eamodio/vscode-gitlens/master/images/ss-gitlens-line-history-explorer.png" alt="GitLens Line History Explorer" />
+</p>
+
+A [customizable](#gitlens-line-history-explorer-settings 'Jump to the GitLens Line History Explorer settings') explorer to visualize the revision history of the selected lines of current file.
+
+- A toolbar provides a _Refresh_ command
+  - A context menu provides a _Follow Renames_ or _Don't Follow Renames_ command
+
+The line history explorer provides the revision history of the selected lines in the current file, which has the following features,
+
+- Automatically updates to track the selection of the current editor
+- A context menu provides _Open File_, _Open File in Remote_ (if available), _Copy Remote File Url to Clipboard_ (if available), and _Refresh_ commands
 - An inline toolbar provides an _Open File_ command
 - Context menus for each revision (commit) provides
   - _Open Changes_, _Open Changes with Working File_, _Open File_, _Open Revision_, _Open File in Remote_ (if available), _Open Revision in Remote_ (if available), _Apply Changes_, _Compare with Selected_ (when available), _Select for Compare_, and _Show Commit File Details_ commands
@@ -681,10 +703,21 @@ See also [Explorer Settings](#explorer-settings 'Jump to the Explorer settings')
 
 See also [Explorer Settings](#explorer-settings 'Jump to the Explorer settings')
 
-| Name                               | Description                                                                                                                                                                                    |
-| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `gitlens.historyExplorer.enabled`  | Specifies whether to show the current file history undocked in a _GitLens File History_ explorer                                                                                               |
-| `gitlens.historyExplorer.location` | Specifies where to show the _GitLens File History_ explorer<br />`gitlens` - adds to the GitLens view<br />`explorer` - adds to the Explorer view<br />`scm` - adds to the Source Control view |
+| Name                                   | Description                                                                                                                                                                                    |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `gitlens.fileHistoryExplorer.avatars`  | Specifies whether to show avatar images instead of status icons in the `GitLens File History` explorer                                                                                         |
+| `gitlens.fileHistoryExplorer.enabled`  | Specifies whether to show the _GitLens File History_ explorer                                                                                                                                  |
+| `gitlens.fileHistoryExplorer.location` | Specifies where to show the _GitLens File History_ explorer<br />`gitlens` - adds to the GitLens view<br />`explorer` - adds to the Explorer view<br />`scm` - adds to the Source Control view |
+
+### GitLens Line History Explorer Settings
+
+See also [Explorer Settings](#explorer-settings 'Jump to the Explorer settings')
+
+| Name                                   | Description                                                                                                                                                                                    |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `gitlens.fileHistoryExplorer.avatars`  | Specifies whether to show avatar images instead of status icons in the `GitLens Line History` explorer                                                                                         |
+| `gitlens.lineHistoryExplorer.enabled`  | Specifies whether to show the _GitLens Line History_ explorer                                                                                                                                  |
+| `gitlens.lineHistoryExplorer.location` | Specifies where to show the _GitLens Line History_ explorer<br />`gitlens` - adds to the GitLens view<br />`explorer` - adds to the Explorer view<br />`scm` - adds to the Source Control view |
 
 ### GitLens Results Explorer Settings
 

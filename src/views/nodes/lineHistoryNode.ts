@@ -1,16 +1,10 @@
 'use strict';
-import { Disposable, Range, TreeItem, TreeItemCollapsibleState } from 'vscode';
-import { GlyphChars } from '../../constants';
+import { Disposable, Selection, TreeItem, TreeItemCollapsibleState } from 'vscode';
 import { Container } from '../../container';
-import {
-    GitUri,
-    Repository,
-    RepositoryChange,
-    RepositoryChangeEvent,
-    RepositoryFileSystemChangeEvent
-} from '../../gitService';
+import { GitCommitType, GitLogCommit, IGitStatusFile } from '../../git/git';
+import { GitUri, RepositoryChange, RepositoryChangeEvent, RepositoryFileSystemChangeEvent } from '../../gitService';
 import { Logger } from '../../logger';
-import { Iterables, Strings } from '../../system';
+import { Iterables } from '../../system';
 import { LineHistoryExplorer } from '../lineHistoryExplorer';
 import { CommitFileNode, CommitFileNodeDisplayAs } from './commitFileNode';
 import { MessageNode } from './common';
@@ -19,7 +13,7 @@ import { ExplorerNode, ResourceType, SubscribeableExplorerNode } from './explore
 export class LineHistoryNode extends SubscribeableExplorerNode<LineHistoryExplorer> {
     constructor(
         uri: GitUri,
-        public readonly range: Range,
+        public readonly selection: Selection,
         explorer: LineHistoryExplorer
     ) {
         super(uri, explorer);
@@ -34,16 +28,49 @@ export class LineHistoryNode extends SubscribeableExplorerNode<LineHistoryExplor
 
         const log = await Container.git.getLogForFile(this.uri.repoPath, this.uri.fsPath, {
             ref: this.uri.sha,
-            range: this.range
+            range: this.selection
         });
         if (log !== undefined) {
             children.push(
-                ...Iterables.map(
+                ...Iterables.filterMap(
                     log.commits.values(),
-                    // TODO: Include range when opening diff
-                    c => new CommitFileNode(c.fileStatuses[0], c, this.explorer, displayAs)
+                    c => new CommitFileNode(c.fileStatuses[0], c, this.explorer, displayAs, this.selection)
                 )
             );
+        }
+
+        const blame = await Container.git.getBlameForLine(this.uri, this.selection.active.line);
+        if (blame !== undefined) {
+            const first = children[0] as CommitFileNode | undefined;
+
+            if (first === undefined || first.commit.sha !== blame.commit.sha) {
+                const status: IGitStatusFile = {
+                    fileName: blame.commit.fileName,
+                    indexStatus: '?',
+                    originalFileName: blame.commit.originalFileName,
+                    repoPath: this.uri.repoPath!,
+                    status: 'M',
+                    workTreeStatus: '?'
+                };
+
+                const commit = new GitLogCommit(
+                    GitCommitType.File,
+                    this.uri.repoPath!,
+                    blame.commit.sha,
+                    'You',
+                    blame.commit.email,
+                    blame.commit.date,
+                    blame.commit.message,
+                    blame.commit.fileName,
+                    [status],
+                    'M',
+                    blame.commit.originalFileName,
+                    blame.commit.previousSha,
+                    blame.commit.originalFileName || blame.commit.fileName
+                );
+
+                children.splice(0, 0, new CommitFileNode(status, commit, this.explorer, displayAs, this.selection));
+            }
         }
 
         if (children.length === 0) return [new MessageNode('No line history')];
@@ -51,10 +78,13 @@ export class LineHistoryNode extends SubscribeableExplorerNode<LineHistoryExplor
     }
 
     getTreeItem(): TreeItem {
-        const lines = this.range.isSingleLine
-            ? ` (Ln ${this.range.start.line + 1})${Strings.pad(GlyphChars.Dot, 2, 2)}`
-            : ` (Ln ${this.range.start.line + 1}-${this.range.end.line + 1})${Strings.pad(GlyphChars.Dot, 2, 2)}`;
-        const item = new TreeItem(`${this.uri.getFormattedPath(lines)}`, TreeItemCollapsibleState.Expanded);
+        const lines = this.selection.isSingleLine
+            ? ` #${this.selection.start.line + 1}`
+            : ` #${this.selection.start.line + 1}-${this.selection.end.line + 1}`;
+        const item = new TreeItem(
+            `${this.uri.getFormattedPath({ suffix: `${lines}${this.uri.sha ? ` (${this.uri.shortSha})` : ''}` })}`,
+            TreeItemCollapsibleState.Expanded
+        );
         item.contextValue = ResourceType.FileHistory;
         item.tooltip = `History of ${this.uri.getFilename()}${lines}\n${this.uri.getDirectory()}/`;
 

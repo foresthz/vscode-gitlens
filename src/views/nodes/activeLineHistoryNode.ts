@@ -1,13 +1,11 @@
 'use strict';
-import * as path from 'path';
 import {
     Disposable,
-    Range,
+    Selection,
     TextEditor,
     TextEditorSelectionChangeEvent,
     TreeItem,
     TreeItemCollapsibleState,
-    Uri,
     window
 } from 'vscode';
 import { UriComparer } from '../../comparers';
@@ -21,7 +19,7 @@ import { LineHistoryNode } from './lineHistoryNode';
 
 export class ActiveLineHistoryNode extends SubscribeableExplorerNode<LineHistoryExplorer> {
     private _child: LineHistoryNode | undefined;
-    private _selection: Range | undefined;
+    private _selection: Selection | undefined;
 
     constructor(explorer: LineHistoryExplorer) {
         super(unknownGitUri, explorer);
@@ -86,32 +84,14 @@ export class ActiveLineHistoryNode extends SubscribeableExplorerNode<LineHistory
             return;
         }
 
-        let gitUri = await GitUri.fromUri(editor!.document.uri);
-
-        let uri;
-        if (gitUri.sha !== undefined) {
-            // If we have a sha, normalize the history to the working file (so we get a full history all the time)
-            const [fileName, repoPath] = await Container.git.findWorkingFileName(
-                gitUri.fsPath,
-                gitUri.repoPath,
-                gitUri.sha
-            );
-
-            if (fileName !== undefined) {
-                uri = Uri.file(repoPath !== undefined ? path.join(repoPath, fileName) : fileName);
-            }
-        }
+        const gitUri = await GitUri.fromUri(editor!.document.uri);
 
         if (
             this.uri !== unknownGitUri &&
-            UriComparer.equals(uri || gitUri, this.uri) &&
+            UriComparer.equals(gitUri, this.uri) &&
             (this._selection !== undefined && editor.selection.isEqual(this._selection))
         ) {
             return;
-        }
-
-        if (uri !== undefined) {
-            gitUri = await GitUri.fromUri(uri);
         }
 
         this._uri = gitUri;

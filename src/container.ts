@@ -53,20 +53,31 @@ export class Container {
             });
         }
 
-        if (config.historyExplorer.enabled) {
+        if (config.fileHistoryExplorer.enabled) {
             context.subscriptions.push((this._fileHistoryExplorer = new FileHistoryExplorer()));
         }
         else {
             let disposable: Disposable;
             disposable = configuration.onDidChange(e => {
-                if (configuration.changed(e, configuration.name('historyExplorer')('enabled').value)) {
+                if (configuration.changed(e, configuration.name('fileHistoryExplorer')('enabled').value)) {
                     disposable.dispose();
                     context.subscriptions.push((this._fileHistoryExplorer = new FileHistoryExplorer()));
                 }
             });
         }
 
-        context.subscriptions.push((this._lineHistoryExplorer = new LineHistoryExplorer()));
+        if (config.lineHistoryExplorer.enabled) {
+            context.subscriptions.push((this._lineHistoryExplorer = new LineHistoryExplorer()));
+        }
+        else {
+            let disposable: Disposable;
+            disposable = configuration.onDidChange(e => {
+                if (configuration.changed(e, configuration.name('lineHistoryExplorer')('enabled').value)) {
+                    disposable.dispose();
+                    context.subscriptions.push((this._lineHistoryExplorer = new LineHistoryExplorer()));
+                }
+            });
+        }
 
         context.subscriptions.push(
             workspace.registerTextDocumentContentProvider(GitContentProvider.scheme, new GitContentProvider())
@@ -201,7 +212,7 @@ export class Container {
             config.gitExplorer.enabled = mode.explorers;
         }
         if (mode.explorers != null) {
-            config.historyExplorer.enabled = mode.explorers;
+            config.fileHistoryExplorer.enabled = mode.explorers;
         }
         if (mode.hovers != null) {
             config.hovers.enabled = mode.hovers;

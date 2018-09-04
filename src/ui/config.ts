@@ -188,11 +188,13 @@ export interface IGitExplorerConfig {
     showTrackingBranch: boolean;
 }
 
-export interface IHistoryExplorerConfig {
+export interface IFileHistoryExplorerConfig {
     avatars: boolean;
     enabled: boolean;
-    location: 'explorer' | 'scm';
+    location: 'explorer' | 'gitlens' | 'scm';
 }
+
+export interface ILineHistoryExplorerConfig extends IFileHistoryExplorerConfig {}
 
 export interface IMenuConfig {
     editor:
@@ -240,7 +242,7 @@ export interface IModeConfig {
 
 export interface IResultsExplorerConfig {
     files: IExplorersFilesConfig;
-    location: 'explorer' | 'scm';
+    location: 'explorer' | 'gitlens' | 'scm';
 }
 
 export interface IRemotesConfig {
@@ -307,7 +309,7 @@ export interface IConfig {
         toggleMode: AnnotationsToggleMode;
     };
 
-    historyExplorer: IHistoryExplorerConfig;
+    fileHistoryExplorer: IFileHistoryExplorerConfig;
 
     hovers: {
         annotations: {
@@ -330,6 +332,7 @@ export interface IConfig {
 
     insiders: boolean;
     keymap: KeyMap;
+    lineHistoryExplorer: ILineHistoryExplorerConfig;
     menus: boolean | IMenuConfig;
     mode: {
         active: string;
