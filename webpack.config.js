@@ -133,6 +133,7 @@ function getUIConfig(env) {
                 sources: glob.sync('src/ui/images/settings/*.png'),
                 destination: path.resolve(__dirname, 'images')
             },
+            cacheFolder: path.resolve(__dirname, '.image-cache'),
             gifsicle: null,
             jpegtran: null,
             optipng: null,

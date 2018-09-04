@@ -1,3 +1,4 @@
+.image-cache/**
 emoji/**
 !images/dark/**
 !images/light/**
